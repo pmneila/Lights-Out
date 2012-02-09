@@ -20,12 +20,7 @@ class GF2(object):
     """Galois field GF(2)."""
     
     def __init__(self, a=0):
-        if isinstance(a, int):
-            self.value = a & 1
-        elif isinstance(a, float):
-            self.value = int(a) & 1
-        else:
-            self.value = a.value & 1
+        self.value = int(a) & 1
     
     def __add__(self, rhs):
         return GF2(self.value + GF2(rhs).value)

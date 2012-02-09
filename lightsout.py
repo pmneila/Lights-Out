@@ -4,7 +4,7 @@
 Automatic solver for Lights Out puzzles.
 Currently only square grids are supported.
 
-Includes a Gaussian-Jordan elimination method for matrices
+Includes a Gauss-Jordan elimination method for matrices
 defined on arbitrary fields. In particular, the function
 GF2inv inverts a matrix defined over the Galois Field GF(2) and
 determines its null-space.

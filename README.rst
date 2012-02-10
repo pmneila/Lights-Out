@@ -11,7 +11,7 @@ of a grid graph of the size of the board. The matrix is defined over the
 Galois Field GF(2), and the inversion is performed in this field using
 Gauss-Jordan elimination.
 
-For some board sizes *n* (eg., &n&=5) the adjacency matrix is rank deficient.
+For some board sizes *n* (eg., n=5) the adjacency matrix is rank deficient.
 This means that for those sizes, some initial configurations have no
 solution, and some other configurations have several solutions. The solver
 determines if a given configuration is solvable. In that case,

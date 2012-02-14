@@ -1,4 +1,3 @@
-
 =================
 Lights Out solver
 =================
@@ -12,11 +11,11 @@ Galois Field GF(2), and the inversion is performed in this field using
 Gauss-Jordan elimination.
 
 For some board sizes *n* (eg., n=5) the adjacency matrix is rank deficient.
-This means that for those sizes, some initial configurations have no
-solution, and some other configurations have several solutions. The solver
+This means that for those sizes some initial configurations have no
+solution and some other configurations have several solutions. The solver
 determines if a given configuration is solvable. In that case,
-it finds the simpler solution, ie., the solution with the minimum number
-of movements. To do this, it also computes a base of the right null space of
+it finds the simplest solution, ie., the solution with the minimum number
+of movements. To do this, it computes a base of the right null space of
 the adjacency matrix.
 
 Usage

@@ -31,3 +31,12 @@ the script `lightsoutgui.py`. Execute the script with::
     $ python lightsoutgui.py 5
 
 The first parameter indicates the board size. If omitted, it defaults to 5.
+
+Screenshot
+==========
+
+.. image:: https://github.com/pmneila/Lights-Out/raw/master/screenshot.png
+   :align: center
+
+The initial setup of the board is given by red and green lights. The dark marks
+indicate the keys the player must press to turn the green lights red.

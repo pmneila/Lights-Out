@@ -49,7 +49,7 @@ class GF2(object):
     
     def __lt__(self, rhs):
         if isinstance(rhs, GF2):
-            return self.value <= rhs.value
+            return self.value < rhs.value
         return self.value < rhs
     
     def __int__(self):

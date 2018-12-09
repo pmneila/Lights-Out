@@ -5,24 +5,25 @@ GUI for the Light Out solver.
 """
 
 import sys
-import Tkinter as tk
+import tkinter as tk
 from itertools import product
 
 import numpy as np
 
 import lightsout
 
-button_size = 23
+BUTTON_SIZE = 23
+
 
 class ButtonGrid(tk.Frame, object):
     
     def __init__(self, master, size, callback=None):
         tk.Frame.__init__(self, master)
         
-        buttons = [[None]*size for i in xrange(size)]
-        for r,c in product(xrange(size), xrange(size)):
+        buttons = [[None]*size for i in range(size)]
+        for r,c in product(range(size), range(size)):
             buttons[r][c] = tk.Label(self, bitmap="gray12", bg="red",
-                                width=button_size, height=button_size)
+                                width=BUTTON_SIZE, height=BUTTON_SIZE)
             buttons[r][c].grid(row=r, column=c, padx=2, pady=2)
         
         for btn in sum(buttons, []):
@@ -41,7 +42,8 @@ class ButtonGrid(tk.Frame, object):
             self.callback(self.get_board())
     
     def get_board(self):
-        board = map(lambda x:x["bg"]=="green", sum(self.buttons, []))
+        # board = map(lambda x:x["bg"]=="green", sum(self.buttons, []))
+        board = [i["bg"] == "green" for i in sum(self.buttons, [])]
         return np.reshape(board, (self.size, self.size))
     
     def set_solution(self, solution):
@@ -52,7 +54,7 @@ class ButtonGrid(tk.Frame, object):
         
         assert solution.shape[0]==solution.shape[1]==self.size
         
-        for r,c in product(xrange(self.size), xrange(self.size)):
+        for r,c in product(range(self.size), range(self.size)):
             if solution[r,c]:
                 self.buttons[r][c]["bitmap"] = "gray75"
             else:
@@ -86,22 +88,21 @@ class App(tk.Frame):
 
 def main():
     
-    import sys
-    
     size = 5
     if len(sys.argv) > 1:
         size = int(sys.argv[1])
     else:
-        print """Use
+        print("""Use
 
-    %s <board_size>
+    {} <board_size>
 
-to indicate the board size (default=5)""" % sys.argv[0]
+to indicate the board size (default=5)""".format(sys.argv[0]))
     
     root = tk.Tk()
     app = App(root, size)
     app.master.title("Lights Out solver")
     root.mainloop()
+
 
 if __name__ == '__main__':
     main()

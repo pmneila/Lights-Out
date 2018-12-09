@@ -12,9 +12,11 @@ determines its null-space.
 
 from operator import add
 from itertools import chain, combinations
+from functools import reduce
 
 import numpy as np
 from scipy import ndimage
+
 
 class GF2(object):
     """Galois field GF(2)."""
@@ -31,7 +33,7 @@ class GF2(object):
     def __sub__(self, rhs):
         return GF2(self.value - GF2(rhs).value)
     
-    def __div__(self, rhs):
+    def __truediv__(self, rhs):
         return GF2(self.value / GF2(rhs).value)
     
     def __repr__(self):
@@ -61,23 +63,25 @@ class GF2(object):
 
 GF2array = np.vectorize(GF2)
 
+
 def gjel(A):
     """Gauss-Jordan elimination."""
     nulldim = 0
-    for i in xrange(len(A)):
-        pivot = A[i:,i].argmax() + i
-        if A[pivot,i] == 0:
+    for i, row1 in enumerate(A):
+        pivot = A[i:, i].argmax() + i
+        if A[pivot, i] == 0:
             nulldim = len(A) - i
             break
-        row = A[pivot] / A[pivot,i]
+        new_row = A[pivot] / A[pivot, i]
         A[pivot] = A[i]
-        A[i] = row
+        row1[:] = new_row
         
-        for j in xrange(len(A)):
+        for j, row2 in enumerate(A):
             if j == i:
                 continue
-            A[j] -= row*A[j,i]
+            row2[:] -= new_row*A[j, i]
     return A, nulldim
+
 
 def GF2inv(A):
     """Inversion and eigenvectors of the null-space of a GF2 matrix."""
@@ -97,17 +101,20 @@ def GF2inv(A):
     
     return inverse, null_vectors
 
+
 def lightsoutbase(n):
     """Base of the LightsOut problem of size (n,n)"""
     a = np.eye(n*n)
-    a = np.reshape(a, (n*n,n,n))
-    a = np.array(map(ndimage.binary_dilation, a))
+    a = np.reshape(a, (n*n, n, n))
+    a = np.array(list(map(ndimage.binary_dilation, a)))
     return np.reshape(a, (n*n, n*n))
+
 
 def powerset(iterable):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
 
 class LightsOut(object):
     """Lights-Out solver."""
@@ -122,7 +129,7 @@ class LightsOut(object):
         assert b.shape[0] == b.shape[1] == self.n, "incompatible shape"
         
         if not self.issolvable(b):
-            raise ValueError, "The given setup is not solvable"
+            raise ValueError("The given setup is not solvable")
         
         # Find the base solution.
         first = np.dot(self.invbase, b.ravel()) & 1
@@ -130,9 +137,9 @@ class LightsOut(object):
         # Given a solution, we can find more valid solutions
         # adding any combination of the null vectors.
         # Find the solution with the minimum number of 1's.
-        solutions = [(first + reduce(add, nvs, 0))&1 for nvs in powerset(self.null_vectors)]
+        solutions = [(first + reduce(add, nvs, 0)) & 1 for nvs in powerset(self.null_vectors)]
         final = min(solutions, key=lambda x: x.sum())
-        return np.reshape(final, (self.n,self.n))
+        return np.reshape(final, (self.n, self.n))
     
     def issolvable(self, b):
         """Determine if the given configuration is solvable.
@@ -143,23 +150,21 @@ class LightsOut(object):
         b = np.asarray(b)
         assert b.shape[0] == b.shape[1] == self.n, "incompatible shape"
         b = b.ravel()
-        p = map(lambda x: np.dot(x,b)&1, self.null_vectors)
+        p = [np.dot(x, b) & 1 for x in self.null_vectors]
         return not any(p)
     
 
 def main():
     """Example."""
     lo = LightsOut(5)
-    b = np.array([[0,0,1,0,0],
-                  [0,1,0,1,0],
-                  [1,0,0,0,1],
-                  [1,1,1,1,1],
-                  [1,0,0,0,1]])
+    b = np.array([[0, 0, 1, 0, 0],
+                  [0, 1, 0, 1, 0],
+                  [1, 0, 0, 0, 1],
+                  [1, 1, 1, 1, 1],
+                  [1, 0, 0, 0, 1]])
     bsol = lo.solve(b)
-    print "The solution of"
-    print b
-    print "is"
-    print bsol
+    print("The solution of\n{}\nis\n{}".format(b, bsol))
+
 
 if __name__ == '__main__':
     main()
